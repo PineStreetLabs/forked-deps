@@ -201,10 +201,8 @@ impl SimpleHttpTransport {
             return Err(Error::HttpResponseNonAsciiHello(header_buf.as_bytes()[..12].to_vec()));
         }
         if !header_buf.starts_with("HTTP/1.1 ") {
-            return Err(Error::HttpResponseBadHello {
-                actual: header_buf[0..9].into(),
-                expected: "HTTP/1.1 ".into(),
-            });
+            // Our node provider is using some type of proxy that doesn't return HTTP/1.1.
+            // We ignore this check.
         }
         let response_code = match header_buf[9..12].parse::<u16>() {
             Ok(n) => n,
